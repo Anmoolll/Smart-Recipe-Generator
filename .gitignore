@@ -34,5 +34,5 @@ yarn-error.log*
 next-env.d.ts
 
 # google credentials
-*-service-account-key.json
+*google-vision-key.json
 
