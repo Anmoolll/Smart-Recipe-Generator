@@ -1,9 +1,9 @@
-import mongoose, { Schema, models } from 'mongoose';
+import mongoose, { Schema, models, Types } from 'mongoose';
 
 export interface IRating {
-  _id: string;
-  user: string;
-  recipe: string;
+  _id: Types.ObjectId;
+  user: Types.ObjectId;
+  recipe: Types.ObjectId;
   rating: number;
   comment?: string;
   createdAt: Date;
