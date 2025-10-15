@@ -253,7 +253,13 @@ export default function RecipeDetailView({ recipe }: RecipeDetailViewProps) {
       </div>
 
       {/* Rating Section */}
-      <RatingSection recipe={recipe} />
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <RatingSection
+          recipeId={recipe._id}
+          averageRating={recipe.averageRating}
+          totalRatings={recipe.totalRatings}
+        />
+      </div>
     </div>
   );
 }

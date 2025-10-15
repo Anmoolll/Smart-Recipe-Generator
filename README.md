@@ -2,14 +2,29 @@
 
 A modern Next.js web application that helps users discover recipes based on ingredients they have, featuring AI-powered image recognition and intelligent recipe matching.
 
-## 🚀 Features
+## Screenshots
+
+### Home Page
+![Home Page](./screenshots/landing-page.png)
+
+### Recipe Results
+![Recipe Results](./screenshots/search-res.png)
+
+### Sign-in
+![Sign in](./screenshots/signin.png)
+
+### Sign-up
+![Sign up](./screenshots/signup.png)
+
+## Features
 
 ### Core Functionality
 - **AI-Powered Ingredient Detection**: Upload photos of ingredients and use Google Vision API to automatically detect them
 - **Smart Recipe Matching**: Get recipes ranked by ingredient match percentage
 - **Advanced Filtering**: Filter recipes by dietary preferences, difficulty, and cook time
 - **Serving Size Adjustment**: Automatically recalculate ingredients and nutrition based on serving size
-- **Recipe Ratings & Reviews**: Rate and review recipes with a 5-star system
+- **Recipe Ratings & Reviews**: Interactive 5-star rating system with personalized recipe suggestions
+- **Smart Recommendations**: Get recipe suggestions based on your rating history and preferences
 - **Save Favorite Recipes**: Bookmark recipes for easy access later
 
 ### User Experience
@@ -58,8 +73,8 @@ Before you begin, ensure you have:
 ### 1. Clone the repository
 
 ```bash
-git clone <repository-url>
-cd recipe-finder-app
+git clone https://github.com/Anmoolll/Smart-Recipe-Generator.git
+cd Smart-Recipe-Generator
 ```
 
 ### 2. Install dependencies
@@ -123,7 +138,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 ├── app/                      # Next.js app directory
@@ -164,7 +179,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 └── public/                  # Static files
 ```
 
-## 🔌 API Routes
+##  API Routes
 
 ### Authentication
 - `POST /api/auth/signup` - Register new user
@@ -177,6 +192,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - `PUT /api/recipes/[id]` - Update recipe
 - `DELETE /api/recipes/[id]` - Delete recipe
 - `POST /api/recipes/[id]/rate` - Rate a recipe
+- `GET /api/recipes/[id]/rate` - Get user's rating for a recipe
+- `GET /api/recipes/suggestions` - Get personalized recipe suggestions
 - `POST /api/recipes/match` - Match recipes by ingredients
 
 ### User
@@ -187,7 +204,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ### Vision
 - `POST /api/vision/detect` - Detect ingredients from image
 
-## 🎨 Key Features Explained
+##  Key Features Explained
 
 ### Ingredient Detection
 Upload a photo and the Google Vision API analyzes it to detect food items. The system filters for food-related labels and presents them as editable chips.
@@ -213,7 +230,7 @@ Users can filter recipes by:
 - Difficulty level (Easy, Medium, Hard)
 - Maximum cook time
 
-## 🚀 Deployment
+##  Deployment
 
 ### Deploy to Vercel
 
@@ -230,7 +247,7 @@ Vercel automatically detects Next.js and configures everything.
 - For Google Vision API, you may need to use base64 encoded credentials
 - MongoDB Atlas should allow connections from anywhere (0.0.0.0/0) or add Vercel's IP ranges
 
-## 📝 Additional Features to Consider
+##  Additional Features to Consider
 
 The app is designed to be extensible. Consider adding:
 
@@ -266,15 +283,7 @@ The app is designed to be extensible. Consider adding:
 
 This project is open source and available under the MIT License.
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📧 Support
-
-For issues and questions, please open an issue on GitHub.
-
 ---
 
-Built with ❤️ using Next.js, React, MongoDB, and Google Cloud Vision API
+Built with ❤️ using Next.js, React, MongoDB, and Google Cloud Vision API By Anmol Agarwal
 

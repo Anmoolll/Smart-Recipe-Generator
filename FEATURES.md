@@ -64,19 +64,33 @@ Complete guide to all features in the RecipeFinder app.
   - Step-by-step instructions
   - Detailed nutrition information
 
-### 4. Recipe Ratings & Reviews
+### 4. Recipe Ratings & Smart Suggestions
 
-**Features:**
-- 5-star rating system
-- Optional text comments
+**Rating Features:**
+- Interactive 5-star rating system
+- Real-time rating updates
 - View all ratings from other users
 - Update your rating anytime
-- See rating date
+- See rating date and history
+
+**Smart Suggestions:**
+- Personalized recipe recommendations based on:
+  - Your highly rated recipes (4+ stars)
+  - Common tags among liked recipes
+  - Dietary preferences from rated recipes
+  - Overall community ratings
+- New users get popular, highly-rated recipes
+- Suggestions exclude recipes you've already rated
 
 **Calculation:**
 - Average rating calculated automatically
 - Total ratings displayed
 - Recipes sorted by rating in browse view
+- Suggestion algorithm weighs multiple factors:
+  - Tag matching from liked recipes
+  - Dietary preference patterns
+  - Community rating scores
+  - Recipe freshness
 
 ### 5. Save Favorite Recipes
 
@@ -313,6 +327,8 @@ Match: 75% (3 out of 4 ingredients)
 - `PUT /api/recipes/[id]` - Update recipe
 - `DELETE /api/recipes/[id]` - Delete recipe
 - `POST /api/recipes/[id]/rate` - Rate recipe
+- `GET /api/recipes/[id]/rate` - Get user's rating for recipe
+- `GET /api/recipes/suggestions` - Get personalized suggestions
 - `POST /api/recipes/match` - Match recipes by ingredients
 
 **Users:**

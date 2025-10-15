@@ -1,74 +1,82 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import connectDB from '@/lib/mongodb';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../../auth/[...nextauth]';
+import dbConnect from '@/lib/mongodb';
+import Rating from '@/models/Rating';
 import Recipe from '@/models/Recipe';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
+  const session = await getServerSession(req, res, authOptions);
+  
+  if (!session?.user) {
+    return res.status(401).json({ message: 'Unauthorized' });
   }
 
-  try {
-    const session = await getServerSession(req, res, authOptions);
+  const { id } = req.query;
+  if (!id || typeof id !== 'string') {
+    return res.status(400).json({ message: 'Recipe ID is required' });
+  }
 
-    if (!session) {
-      return res.status(401).json({ message: 'Unauthorized' });
-    }
+  await dbConnect();
 
-    await connectDB();
+  switch (req.method) {
+    case 'POST':
+      try {
+        const { rating, comment } = req.body;
+        
+        if (!rating || rating < 1 || rating > 5) {
+          return res.status(400).json({ message: 'Rating must be between 1 and 5' });
+        }
 
-    const { id } = req.query;
-    const { rating, comment } = req.body;
+        // Check if recipe exists
+        const recipe = await Recipe.findById(id);
+        if (!recipe) {
+          return res.status(404).json({ message: 'Recipe not found' });
+        }
 
-    if (!id || typeof id !== 'string') {
-      return res.status(400).json({ message: 'Invalid recipe ID' });
-    }
+        // Upsert the rating (create or update)
+        const updatedRating = await Rating.findOneAndUpdate(
+          { user: session.user.id, recipe: id },
+          { rating, comment },
+          { upsert: true, new: true, runValidators: true }
+        );
 
-    if (!rating || rating < 1 || rating > 5) {
-      return res.status(400).json({ message: 'Rating must be between 1 and 5' });
-    }
+        // Calculate and update average rating
+        const ratings = await Rating.find({ recipe: id });
+        const avgRating = ratings.reduce((acc, curr) => acc + curr.rating, 0) / ratings.length;
+        
+        await Recipe.findByIdAndUpdate(id, { 
+          averageRating: Math.round(avgRating * 10) / 10,
+          totalRatings: ratings.length 
+        });
 
-    const recipe = await Recipe.findById(id);
+        return res.status(200).json(updatedRating);
+      } catch (error) {
+        console.error('Rating error:', error);
+        return res.status(500).json({ message: 'Failed to rate recipe' });
+      }
+      break;
 
-    if (!recipe) {
-      return res.status(404).json({ message: 'Recipe not found' });
-    }
+    case 'GET':
+      try {
+        const rating = await Rating.findOne({
+          user: session.user.id,
+          recipe: id,
+        });
+        
+        if (!rating) {
+          return res.status(404).json({ message: 'Rating not found' });
+        }
 
-    // Check if user already rated this recipe
-    const existingRatingIndex = recipe.ratings.findIndex(
-      (r: any) => r.userId.toString() === session.user.id
-    );
+        return res.status(200).json(rating);
+      } catch (error) {
+        console.error('Get rating error:', error);
+        return res.status(500).json({ message: 'Failed to get rating' });
+      }
+      break;
 
-    if (existingRatingIndex !== -1) {
-      // Update existing rating
-      recipe.ratings[existingRatingIndex] = {
-        userId: session.user.id,
-        rating,
-        comment,
-        createdAt: new Date(),
-      };
-    } else {
-      // Add new rating
-      recipe.ratings.push({
-        userId: session.user.id,
-        rating,
-        comment,
-        createdAt: new Date(),
-      });
-    }
-
-    // Recalculate average rating
-    const totalRating = recipe.ratings.reduce((sum: number, r: any) => sum + r.rating, 0);
-    recipe.averageRating = totalRating / recipe.ratings.length;
-    recipe.totalRatings = recipe.ratings.length;
-
-    await recipe.save();
-
-    return res.status(200).json({ recipe });
-  } catch (error) {
-    console.error('Rating API error:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    default:
+      res.setHeader('Allow', ['GET', 'POST']);
+      return res.status(405).json({ message: `Method ${req.method} not allowed` });
   }
 }
-
